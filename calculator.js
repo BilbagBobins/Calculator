@@ -8,7 +8,7 @@ function subtract(a, b) {
 
 function divide(a, b) {
     if (b == 0) {
-        display.textContent = 'You wot m8?';
+        displayNumber.textContent = 'You wot m8?';
         return;
     }
     return a / b;
@@ -19,80 +19,127 @@ function multiply(a, b) {
 }
 
 function numberButtons() {
-    for (i = 0; i < 10; i++) {
+    for (i = -1; i < 10; i++) {
         const num = document.createElement('button');
-        num.textContent = i;
-        num.classList.add('number');
-        num.setAttribute('id', i);
+        if (i < 0) {
+            num.textContent = '.';
+            num.setAttribute('id', 'decimal');
+        } else {
+            num.textContent = i;
+            num.setAttribute('id', i);
+        }
+        num.classList.add('number');   
         numbers.appendChild(num);
-        const button = document.querySelectorAll('.number');
-        button.forEach(number => number.addEventListener('click', displayItem))
+        num.addEventListener('click', displayItem);
+    }
+}
+
+function operatorButtons() {
+    for (i = 0; i < operatorArray.length; i++) {
+        const button = document.createElement('button');
+        button.classList.add('operator');
+        button.setAttribute('id', operatorArray[i].name);
+        button.textContent = operatorArray[i].symbol;
+        operators.appendChild(button);
+        document.querySelectorAll('.operator').forEach(operator => operator.addEventListener('click', operatorValue));
+    }
+}
+
+function functionButtons() {
+    for (i = 0; i < functionsArray.length; i++) {
+        const button  = document.createElement('button');
+        button.classList.add('function');
+        functionName = functionsArray[i].name
+        button.setAttribute('id', functionName);
+        button.textContent = functionsArray[i].symbol;
+        functions.appendChild(button);
+        button.addEventListener('click', window[functionName]);
     }
 }
 
 function operate(operator, a, b) {
     // using 'window' to allow a variable to be passed as a function call
     let num = window[operator](parseFloat(a), parseFloat(b))
-    if (display.textContent === displayValue){
-        display.textContent = num;
+    if (displayNumber.textContent === displayValue){
+        displayNumber.textContent = num;
     }
     displayValue = '';
-    operatorCounter++;
 }
 
 function equals() {
     if (num1 && operator && displayValue) {
         operate(operator, num1, displayValue)
     }
+    num1 = '';
 }
 
 function operatorValue(){
-    operator = this.id;
-    if (num1) {
+    if (num1 && displayValue) {
+        displayOperator.textContent = document.getElementById(operator).textContent;
         operate(operator, num1, displayValue);
     }
-    num1 = display.textContent;
+    operator = this.id;
+    if (num1) {
+        displayOperator.textContent = document.getElementById(operator).textContent;
+        operate(operator, num1, displayValue);
+    }
+    displayOperator.textContent = document.getElementById(operator).textContent;
+    num1 = displayNumber.textContent;
     displayValue = '';
 }
 
 function displayItem() {
     if (displayValue.length > 9) return;
+    if (this.textContent.includes('.') && displayValue.includes('.')) return;
     displayValue += String(this.textContent);
-    display.textContent = displayValue;  
+    displayNumber.textContent = displayValue;
+    displayOperator.textContent = '';  
 }
 
 function backspace() {
+    if (operator) {
+        operator = '';
+        displayOperator.textContent = '';
+    } else {
     displayValue = displayValue.slice(0, -1);
-    display.textContent = displayValue;
+    displayNumber.textContent = displayValue;
+    }
 }
 
 function clear() {
-    display.textContent = 0
-    displayValue = num1 = operator = '';
-    operatorCounter = 0;
+    displayNumber.textContent = 0
+    displayValue = num1 = operator = displayOperator.textContent = '';
 }
 
-let operatorCounter = 0;
 let num1 = '';
 let operator = '';
 let displayValue = '';
 
-const display = document.querySelector('.display');
+const operatorArray = [
+    {name: 'add', symbol: '+'},
+    {name: 'subtract', symbol: '-'},
+    {name: 'multiply', symbol: 'x'},
+    {name: 'divide', symbol: '÷'}
+]
+
+const functionsArray = [
+    {name: 'equals', symbol: '='},
+    {name: 'clear', symbol: 'C'},
+    {name: 'backspace', symbol: '⌫'},
+]
+
+const displayNumber = document.getElementById('number-display');
+const displayOperator = document.getElementById('operator-display');
 const numbers = document.querySelector('.numbers');
+const operators = document.querySelector('.operators');
+const functions = document.querySelector('.functions');
 
-const addButton = document.querySelector('#add').addEventListener('click', operatorValue);
-const subtractButton = document.querySelector('#subtract').addEventListener('click', operatorValue);
-const multiplyButton = document.querySelector('#multiply').addEventListener('click', operatorValue);
-const divideButton = document.querySelector('#divide').addEventListener('click', operatorValue);
-const clearButton = document.getElementById('clear').addEventListener('click', clear);
-const backspaceButton = document.getElementById('backspace').addEventListener('click', backspace);
-const equalsButton = document.querySelector('#equals').addEventListener('click', equals);
-
+functionButtons();
+operatorButtons();
 numberButtons();
 
-// TODO fix consecutive calculations bug - outputting weird numbers
+
 // TODO fix rounding and general decimal calculations
 // TODO any decimals should not overflow
-// TODO decimal button
 // TODO keyboard support
 // TODO CSS

@@ -3,8 +3,10 @@ button {
     width: 80px;
 }
 
-.display {
-    text-align: end;
+.display-container {
+    display: flex;
+    justify-content: end;
+    align-items: center;
     height: 50px;
     width: 50%;
     font-size: 40px;
