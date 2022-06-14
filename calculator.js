@@ -34,6 +34,28 @@ function numberButtons() {
     }
 }
 
+document.addEventListener('keydown', function(event) {
+    const operatorKeys = operatorArray.map(operator => (operator.key));
+
+    const functionKeys = functionsArray.map(func => (func.key));
+
+    if (!isNaN(event.key)) {
+        document.getElementById(`${event.key}`).click();
+    } else if (operatorKeys.includes(event.key)) {
+        const operator = operatorArray.find(operator => (operator.key === event.key));
+        document.getElementById(`${operator.name}`).click();
+    } else if (functionKeys.includes(event.key) || functionKeys[0].includes(event.key)) {
+        const funct = functionsArray.find(function(funct) {
+            if (funct.key === event.key || funct.key[0] === event.key || funct.key[1] === event.key) {
+                return true;
+            }
+        });
+        document.getElementById(`${funct.name}`).click();
+    } else if (event.key === '.') {
+        document.getElementById('decimal').click();
+    }
+});
+
 function operatorButtons() {
     for (i = 0; i < operatorArray.length; i++) {
         const button = document.createElement('button');
@@ -41,7 +63,7 @@ function operatorButtons() {
         button.setAttribute('id', operatorArray[i].name);
         button.textContent = operatorArray[i].symbol;
         operators.appendChild(button);
-        document.querySelectorAll('.operator').forEach(operator => operator.addEventListener('click', operatorValue));
+        button.addEventListener('click', operatorValue);
     }
 }
 
@@ -57,11 +79,11 @@ function functionButtons() {
     }
 }
 
-function operate(operator, a, b) {
+function operate(operator, numA, numB) {
     // using 'window' to allow a variable to be passed as a function call
-    let num = window[operator](parseFloat(a), parseFloat(b))
+    let result = window[operator](parseFloat(numA), parseFloat(numB))
     if (displayNumber.textContent === displayValue){
-        displayNumber.textContent = num;
+        displayNumber.textContent = result;
     }
     displayValue = '';
 }
@@ -100,6 +122,8 @@ function backspace() {
     if (operator) {
         operator = '';
         displayOperator.textContent = '';
+        displayValue = num1;
+        num1 = '';
     } else {
     displayValue = displayValue.slice(0, -1);
     displayNumber.textContent = displayValue;
@@ -116,16 +140,16 @@ let operator = '';
 let displayValue = '';
 
 const operatorArray = [
-    {name: 'add', symbol: '+'},
-    {name: 'subtract', symbol: '-'},
-    {name: 'multiply', symbol: 'x'},
-    {name: 'divide', symbol: '÷'}
+    {name: 'add', symbol: '+', key: '+'},
+    {name: 'subtract', symbol: '-', key: '-'},
+    {name: 'multiply', symbol: 'x', key: '*'},
+    {name: 'divide', symbol: '÷', key: '/'}
 ]
 
 const functionsArray = [
-    {name: 'equals', symbol: '='},
-    {name: 'clear', symbol: 'C'},
-    {name: 'backspace', symbol: '⌫'},
+    {name: 'equals', symbol: '=', key: ['=', 'Enter']},
+    {name: 'clear', symbol: 'C', key: 'c'},
+    {name: 'backspace', symbol: '⌫', key: 'Backspace'},
 ]
 
 const displayNumber = document.getElementById('number-display');
@@ -138,8 +162,6 @@ functionButtons();
 operatorButtons();
 numberButtons();
 
-
 // TODO fix rounding and general decimal calculations
 // TODO any decimals should not overflow
-// TODO keyboard support
 // TODO CSS
