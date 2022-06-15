@@ -8,7 +8,7 @@ function subtract(a, b) {
 
 function divide(a, b) {
     if (b == 0) {
-        displayNumber.textContent = 'You wot m8?';
+        displayNumber.textContent = 'To infinity and beyond!';
         return;
     }
     return a / b;
@@ -28,7 +28,7 @@ function numberButtons() {
             num.textContent = i;
             num.setAttribute('id', i);
         }
-        num.classList.add('number');   
+        num.classList.add('number', `${i}`);   
         numbers.appendChild(num);
         num.addEventListener('click', displayItem);
     }
