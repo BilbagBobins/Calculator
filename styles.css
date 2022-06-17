@@ -62,9 +62,10 @@ button:active {
     align-items: center;
     height: 100px;
     width: 444px;
+    overflow: hidden;
     font-family: 'Orbitron';
     font-size: 25px;
-    border: 6px solid rgb(43, 43, 43);
+    border: 6px solid rgb(75, 75, 75);
     border-radius: 5px;
     background: linear-gradient(170deg, rgba(116,232,255,1) 0%, rgba(224,251,255,1) 49%, rgba(122,233,255,1) 100%);
     margin-bottom: 22px;
